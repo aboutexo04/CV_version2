@@ -1,0 +1,13 @@
+root@instance-16939:/root/CV_competition_practice#: 스킴 빠짐.
+--2025-11-05 19:27:26--  http://git/
+git (git) 해석 중... 실패: nodename nor servname provided, or not known.
+wget: `git' 호스트 주소를 해석할 수 없습니다
+--2025-11-05 19:27:26--  http://checkout/
+checkout (checkout) 해석 중... 실패: nodename nor servname provided, or not known.
+wget: `checkout' 호스트 주소를 해석할 수 없습니다
+--2025-11-05 19:27:26--  http://work-from-nov2/
+work-from-nov2 (work-from-nov2) 해석 중... 실패: nodename nor servname provided, or not known.
+wget: `work-from-nov2' 호스트 주소를 해석할 수 없습니다
+--2025-11-05 19:27:26--  http://1604a27/
+1604a27 (1604a27) 해석 중... 실패: nodename nor servname provided, or not known.
+wget: `1604a27' 호스트 주소를 해석할 수 없습니다
