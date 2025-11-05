@@ -11,7 +11,7 @@ class Config:
     TEST_DIR = 'data/test'
     
     # 모델
-    MODEL_NAME = 'efficientnet_b3'
+    MODEL_NAME = 'efficientnet_b4'
     NUM_CLASSES = 17
     
     # 학습
@@ -27,6 +27,10 @@ class Config:
     # 기타
     SEED = 42
     NUM_WORKERS = 0
+
+    # K-Fold Cross Validation
+    USE_KFOLD = True  # K-Fold 사용 여부
+    N_FOLDS = 5        # Fold 개수
     
     # ✅ Device (CUDA 강제 확인)
     def __init__(self):

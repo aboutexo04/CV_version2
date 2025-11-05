@@ -1,52 +1,31 @@
 """
-src/model.py
-- 모델만
+src/model.py (완전 수정)
 """
 
 import timm
 import torch.nn as nn
 
-def get_model(model_name, num_classes=17, dropout=0.3):
-    """
-    모델 생성
-    ⚠️ pretrained=True 확인!
-    """
+
+def get_model(model_name, num_classes, dropout):
+    """모델 생성 (Dropout 확실히 적용)"""
     print(f"🔨 모델 생성: {model_name}")
     
-    # timm으로 생성
+    # 1. Pretrained 모델 로드 (num_classes 지정 안 함!)
     model = timm.create_model(
         model_name,
-        pretrained=True,  # ⚠️ 매우 중요!
-        num_classes=num_classes,
-        drop_rate=dropout
+        pretrained=True,
+        num_classes=0  # ← 0으로! (classifier 제거)
     )
     
+    # 2. 수동으로 classifier 추가
+    num_features = model.num_features  # 또는 model.classifier.in_features
+    
+    model.classifier = nn.Sequential(
+        nn.Dropout(p=dropout),  # ← Dropout 명시적 추가!
+        nn.Linear(num_features, num_classes)
+    )
+    
+    print(f"   Dropout: {dropout}")
+    print(f"   Features: {num_features} → {num_classes}")
+    
     return model
-
-# ========== 체크용 함수 ==========
-def test_model():
-    """모델 정상 작동 확인"""
-    import torch
-    
-    model = get_model('efficientnet_b3', num_classes=17, dropout=0.3)
-    
-    # 더미 입력
-    dummy_input = torch.randn(2, 3, 300, 300)
-    
-    # Forward
-    model.eval()
-    with torch.no_grad():
-        output = model(dummy_input)
-    
-    print("✅ 모델 체크:")
-    print(f"  입력 shape: {dummy_input.shape}")
-    print(f"  출력 shape: {output.shape}")
-    print(f"  출력 범위: [{output.min():.3f}, {output.max():.3f}]")
-    
-    # 예상 결과
-    assert output.shape == (2, 17), "출력 shape 오류!"
-    
-    print("✅ 모델 체크 완료!")
-
-if __name__ == '__main__':
-    test_model()

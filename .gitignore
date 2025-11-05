@@ -189,6 +189,7 @@ models/
 outputs/
 results/
 checkpoints/
+experiments/
 
 # Keep sample submission format (uncomment if needed)
 # !data/sample_submission.csv
