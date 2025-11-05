@@ -1,6 +1,6 @@
 """
 src/transforms.py
-더 강력한 증강
+문서 이미지 분류용 완화된 증강 버전
 """
 
 import albumentations as A
@@ -8,60 +8,36 @@ from albumentations.pytorch import ToTensorV2
 
 
 def get_train_transform(image_size):
-    """Train 증강 (강력하게!)"""
+    """문서 이미지용 완화된 증강"""
     return A.Compose([
-        # ✅ 크기 관련 (더 다양하게)
+        # 크기: 거의 원본 유지 (문서의 형태 보존)
         A.RandomResizedCrop(
             height=image_size,
             width=image_size,
-            scale=(0.7, 1.0),      # 0.8 → 0.7 (더 다양하게)
-            ratio=(0.8, 1.2)
+            scale=(0.9, 1.0),
+            ratio=(0.9, 1.1)
         ),
-        
-        # ✅ 기하학적 변환 (강화)
+
+        # 기하 변환: 약하게 (문서 왜곡 방지)
         A.HorizontalFlip(p=0.5),
-        A.Rotate(limit=20, p=0.5),          # 15 → 20
         A.ShiftScaleRotate(
-            shift_limit=0.1,
-            scale_limit=0.2,                 # 0.1 → 0.2
-            rotate_limit=20,                 # 15 → 20
+            shift_limit=0.05,
+            scale_limit=0.05,
+            rotate_limit=5,
             p=0.5
         ),
-        
-        # ✅ 색상 변환 (강화)
-        A.OneOf([
-            A.ColorJitter(
-                brightness=0.3,              # 0.2 → 0.3
-                contrast=0.3,
-                saturation=0.3,
-                hue=0.1,                     # 0.05 → 0.1
-                p=1.0
-            ),
-            A.HueSaturationValue(
-                hue_shift_limit=20,
-                sat_shift_limit=30,
-                val_shift_limit=20,
-                p=1.0
-            ),
-        ], p=0.8),
-        
-        # ✅ 노이즈/블러 (추가!)
-        A.OneOf([
-            A.GaussNoise(var_limit=(10, 50), p=1.0),
-            A.GaussianBlur(blur_limit=(3, 7), p=1.0),
-            A.MotionBlur(blur_limit=7, p=1.0),
-        ], p=0.3),  # 30% 확률로 노이즈/블러
-        
-        # ✅ GridDropout 추가 (일부 가리기)
-        A.CoarseDropout(
-            max_holes=8,
-            max_height=32,
-            max_width=32,
-            fill_value=0,
-            p=0.3
+
+        # 색상 밝기/대비: 자연스러운 범위 내에서만
+        A.RandomBrightnessContrast(
+            brightness_limit=0.15,
+            contrast_limit=0.15,
+            p=0.5
         ),
-        
-        # Normalize & Tensor
+
+        # 약한 노이즈 (글자 유지)
+        A.GaussNoise(var_limit=(5, 20), p=0.2),
+
+        # 표준 Normalize 및 Tensor 변환
         A.Normalize(
             mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.225]
@@ -71,7 +47,7 @@ def get_train_transform(image_size):
 
 
 def get_val_transform(image_size):
-    """Validation 증강 (변경 없음)"""
+    """Validation/Test 변환 (증강 없음)"""
     return A.Compose([
         A.Resize(image_size, image_size),
         A.Normalize(
