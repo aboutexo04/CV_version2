@@ -31,6 +31,7 @@ class Config:
     # K-Fold Cross Validation
     USE_KFOLD = True  # K-Fold 사용 여부
     N_FOLDS = 5        # Fold 개수
+    LABEL_SMOOTHING = 0.2
     
     # ✅ Device (CUDA, MPS, CPU 자동 선택)
     def __init__(self):

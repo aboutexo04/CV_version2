@@ -27,7 +27,7 @@ class Trainer:
         
         # ✅ Label Smoothing 추가!
         self.criterion = nn.CrossEntropyLoss(
-            label_smoothing=0.1  # 레이블 스무딩
+            label_smoothing=cfg.LABEL_SMOOTHING # 레이블 스무딩
         )
         
         # 로그 파일
@@ -183,7 +183,8 @@ class Trainer:
                 'epochs': self.cfg.EPOCHS,
                 'lr': self.cfg.LR,
                 'dropout': self.cfg.DROPOUT,
-                'weight_decay': self.cfg.WEIGHT_DECAY
+                'weight_decay': self.cfg.WEIGHT_DECAY,
+                'label_smoothing': self.cfg.LABEL_SMOOTHING 
             },
             'best_results': {
                 'val_f1': self.best_val_f1
